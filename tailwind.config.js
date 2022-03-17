@@ -6,7 +6,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['Catamaran', 'sans-serif']
+				'sans': ['Fredoka', 'sans-serif']
 			}
 		},
 	},
@@ -14,6 +14,6 @@ module.exports = {
 		require('daisyui')
 	],
 	daisyui: {
-		darkTheme: 'forest',
+		darkTheme: 'business',
 	},
 };

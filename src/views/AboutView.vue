@@ -2,23 +2,17 @@
 
 import {onMounted} from 'vue';
 import AuthService from '../services/authService.js';
+import TopNavBar from '../components/TopNavBar.vue';
 
 onMounted(async () => {
-
-  // if (await AuthService.isLoggedIn()) {
-  //   console.log('logged in');
-  // } else {
-  //   console.log('not logged in');
-  // }
-
 });
 
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <main>
+    <TopNavBar/>
+  </main>
 </template>
 
 <style>

@@ -60,7 +60,7 @@ async function handleLogin() {
   try {
 
     await AuthService.login(state.username, state.password);
-    await router.push('/about');
+    await router.push('/');
 
   } catch (e) {
     console.log(e);
