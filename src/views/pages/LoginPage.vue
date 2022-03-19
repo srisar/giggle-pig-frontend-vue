@@ -40,10 +40,11 @@
 <script setup>
 
 import {onMounted, reactive} from 'vue';
-import {useRouter} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import AuthService from '../../services/authService.js';
 
 const router = useRouter();
+const route = useRoute();
 
 const state = reactive({
   username: 'admin',
@@ -51,8 +52,6 @@ const state = reactive({
 });
 
 onMounted(async () => {
-
-
 });
 
 
@@ -60,10 +59,19 @@ async function handleLogin() {
   try {
 
     await AuthService.login(state.username, state.password);
-    await router.push('/');
+    redirectIfExists();
 
   } catch (e) {
     console.log(e);
+  }
+}
+
+
+function redirectIfExists() {
+  if (route.query.hasOwnProperty('redirect')) {
+    router.push(route.query.redirect);
+  } else {
+    router.push('/');
   }
 }
 

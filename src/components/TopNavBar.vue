@@ -1,6 +1,6 @@
 <template>
 
-  <div class="navbar bg-primary">
+  <div class="navbar bg-neutral mb-5" v-if="state.loggedInUser">
     <!-- mobile screen menu -->
     <div class="navbar-start">
       <div class="dropdown">
@@ -24,35 +24,41 @@
           <li><a>Item 3</a></li>
         </ul>
       </div>
-      <a class="btn btn-ghost normal-case text-xl">Giggle Pig</a>
+      <router-link to="/" class="btn btn-ghost normal-case text-xl">
+        <img :src="appIcon" alt="" class="w-10 h-10">
+      </router-link>
     </div>
 
     <!-- large screen menu -->
-    <div class="navbar-center hidden lg:flex">
+    <div class="navbar-center hidden lg:flex z-50">
       <ul class="menu menu-horizontal p-0">
-        <li><a>Item 1</a></li>
+        <li>
+          <router-link to="/about">About</router-link>
+        </li>
         <li tabindex="0">
           <a>
-            Parent
+            Dropdown
             <IconDownArrow/>
           </a>
-          <ul class="p-2">
+          <ul class="p-2 shadow bg-base-100">
             <li><a>Submenu 1</a></li>
             <li><a>Submenu 2</a></li>
           </ul>
         </li>
-        <li><a>Item 3</a></li>
+        <li><a>Another link</a></li>
       </ul>
     </div>
     <div class="navbar-end">
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn m-1 gap-2">
-          <span>{{ state.loggedInUser.username }}</span>
+          <span>{{ state.loggedInUser.fullName }}</span>
           <span><IconUser class-name="w-6 h-6"/></span>
         </label>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
           <li>
-            <button>Manage</button>
+            <router-link :to="{name:'manageUser', params:{'userName': state.loggedInUser.username}}">
+              Manage
+            </router-link>
             <router-link to="/logout">Logout</router-link>
           </li>
         </ul>
@@ -67,14 +73,14 @@
 import IconUser from '../components/icons/IconUser.vue';
 import {onMounted, reactive} from 'vue';
 import AuthService from '../services/authService.js';
-import IconDocumentation from './icons/IconDocumentation.vue';
 import IconDownArrow from './icons/IconDownArrow.vue';
 import {useRouter} from 'vue-router';
+import appIcon from '../assets/app-icon.svg';
 
 const router = useRouter();
 
 const state = reactive({
-  loggedInUser: '',
+  loggedInUser: null,
 });
 
 onMounted(async () => {
@@ -86,7 +92,6 @@ onMounted(async () => {
   }
 
 });
-
 
 
 </script>

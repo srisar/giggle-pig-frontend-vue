@@ -15,8 +15,6 @@ export default class AuthService {
 		}
 		
 		console.log('Auth service initialized...');
-		console.log(AuthService.#USER);
-		console.log(AuthService.#TOKEN);
 	}
 	
 	static async login(username, password) {
@@ -27,6 +25,7 @@ export default class AuthService {
 			});
 			
 			const user = {
+				id: response.data['payload']['id'],
 				username: response.data['payload']['username'],
 				fullName: response.data['payload']['full_name'],
 				email: response.data['payload']['email'],
@@ -70,12 +69,22 @@ export default class AuthService {
 		}
 	}
 	
-	
+	/**
+	 *
+	 * @returns {
+	 * {id:number,
+	 * username:string,
+	 * email:string,
+	 * fullName:string,
+	 * profilePic:string,
+	 * role:string} | null}
+	 */
 	static async getUser() {
-		if (await AuthService.isLoggedIn()) {
-			return AuthService.#USER;
-		}
-		return null;
+		return AuthService.#USER;
+		// if (await AuthService.isLoggedIn()) {
+		// 	return AuthService.#USER;
+		// }
+		// return null;
 	}
 	
 	

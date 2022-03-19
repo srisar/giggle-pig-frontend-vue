@@ -5,7 +5,6 @@ import TopNavBar from '../components/TopNavBar.vue';
 <template>
 
   <main>
-    <TopNavBar/>
   </main>
 
 </template>

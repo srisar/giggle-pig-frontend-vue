@@ -9,6 +9,10 @@ module.exports = {
 				'sans': ['Fredoka', 'sans-serif']
 			}
 		},
+		fontWeight: {
+			bold: 500,
+			normal: 400
+		}
 	},
 	plugins: [
 		require('daisyui')
