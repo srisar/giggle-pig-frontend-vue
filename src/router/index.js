@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import HomeView from '../views/pages/HomeView.vue';
 import {pagesRoutes} from './pages.js';
 import AuthService from '../services/authService.js';
 import {usersRoutes} from './users.js';
@@ -11,7 +11,7 @@ const router = createRouter({
 			path: '/',
 			name: 'home',
 			components: {
-				default: () => import('../views/HomeView.vue'),
+				default: () => import('../views/pages/HomeView.vue'),
 				TopNavBar: () => import('../components/TopNavBar.vue'),
 			},
 			meta: {
@@ -42,12 +42,15 @@ router.beforeEach(async (to, from) => {
 	
 	if (to.meta['requiresAuth'] && !loginState) {
 		console.log('auth not validated');
+		
 		return {
 			path: '/login',
 			query: {redirect: to.fullPath}
 		};
+		
 	} else if (to.meta['requiresAuth'] && loginState) {
-		const user = await AuthService.getUser();
+		const user = AuthService.getUser();
+		
 		if (!to.meta['haveAccess'].includes(user.role)) {
 			return {
 				path: '/login',

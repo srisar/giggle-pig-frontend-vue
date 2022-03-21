@@ -6,18 +6,14 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['Fredoka', 'sans-serif']
+				'sans': ['Alegreya Sans', 'sans-serif']
 			}
 		},
-		fontWeight: {
-			bold: 500,
-			normal: 400
-		}
 	},
 	plugins: [
 		require('daisyui')
 	],
 	daisyui: {
-		darkTheme: 'business',
+		themes: ['halloween']
 	},
 };

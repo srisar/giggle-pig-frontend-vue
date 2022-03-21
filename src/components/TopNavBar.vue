@@ -1,6 +1,6 @@
 <template>
 
-  <div class="navbar bg-neutral mb-5" v-if="state.loggedInUser">
+  <div class="navbar bg-base-300 mb-5" v-if="state.loggedInUser">
     <!-- mobile screen menu -->
     <div class="navbar-start">
       <div class="dropdown">
@@ -51,15 +51,19 @@
     <div class="navbar-end">
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn m-1 gap-2">
-          <span>{{ state.loggedInUser.fullName }}</span>
-          <span><IconUser class-name="w-6 h-6"/></span>
+          <span>{{ state.loggedInUser.full_name }}</span>
+          <span><UserCircleIcon class="w-8 h-8"/></span>
         </label>
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52">
           <li>
             <router-link :to="{name:'manageUser', params:{'userName': state.loggedInUser.username}}">
+              <UserIcon class="w-4 h-4"/>
               Manage
             </router-link>
-            <router-link to="/logout">Logout</router-link>
+            <router-link to="/logout">
+              <LogoutIcon class="w-4 h-4"/>
+              Logout
+            </router-link>
           </li>
         </ul>
       </div>
@@ -74,19 +78,19 @@ import IconUser from '../components/icons/IconUser.vue';
 import {onMounted, reactive} from 'vue';
 import AuthService from '../services/authService.js';
 import IconDownArrow from './icons/IconDownArrow.vue';
-import {useRouter} from 'vue-router';
 import appIcon from '../assets/app-icon.svg';
+import {LogoutIcon, UserIcon, UserCircleIcon} from '@heroicons/vue/solid';
 
-const router = useRouter();
 
 const state = reactive({
+  /** @type{User} */
   loggedInUser: null,
 });
 
 onMounted(async () => {
 
   try {
-    state.loggedInUser = await AuthService.getUser();
+    state.loggedInUser = AuthService.getUser();
   } catch (e) {
     console.log(e);
   }

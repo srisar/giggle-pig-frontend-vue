@@ -1,14 +1,21 @@
 <template>
 
-  <div class="mb-24">
+  <main class="mb-24">
     <router-view name="TopNavBar"/>
-    <router-view/>
-  </div>
+    <section>
+      <aside>
+        <router-view name="Sidebar"/>
+      </aside>
+      <main>
+        <router-view/>
+      </main>
+    </section>
+
+  </main>
 
   <div class="bg-base-300 py-3 mt-10 fixed inset-x-0 bottom-0">
-    <footer class="container mx-auto text-center">
-      <div>giggle pig - a framework to snort them all!</div>
-      <div>made in lk with ❤️</div>
+    <footer class="container mx-auto text-center text-sm">
+      <div>giggle pig - a framework to snort them all! made in sri lanka with ❤</div>
     </footer>
   </div>
 

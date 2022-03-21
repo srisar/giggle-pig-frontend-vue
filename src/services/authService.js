@@ -1,6 +1,5 @@
-import {useStorage} from '@vueuse/core';
 import AxiosService from './axiosService.js';
-import {reactive} from 'vue';
+import {User} from '../models/user.js';
 
 export default class AuthService {
 	
@@ -24,19 +23,9 @@ export default class AuthService {
 				username, password
 			});
 			
-			const user = {
-				id: response.data['payload']['id'],
-				username: response.data['payload']['username'],
-				fullName: response.data['payload']['full_name'],
-				email: response.data['payload']['email'],
-				role: response.data['payload']['role'],
-				profilePic: response.data['payload']['profile_pic'],
-			};
-			
 			const token = response.data['payload']['jwt'];
 			
-			AuthService.#writeLocalStorageValues(user, token);
-			
+			AuthService.#writeLocalStorageValues(new User(response.data['payload']), token);
 			AxiosService.setAuthHeader(`Bearer ${AuthService.#TOKEN}`);
 			
 			return true;
@@ -56,7 +45,7 @@ export default class AuthService {
 	static async isLoggedIn() {
 		
 		/* trying to see if the data is in localStorage */
-		if (AuthService.#USER == null || AuthService.#TOKEN == null) {
+		if (!AuthService.#USER || !AuthService.#TOKEN) {
 			return false;
 		}
 		
@@ -69,29 +58,23 @@ export default class AuthService {
 		}
 	}
 	
+	
 	/**
 	 *
-	 * @returns {
-	 * {id:number,
-	 * username:string,
-	 * email:string,
-	 * fullName:string,
-	 * profilePic:string,
-	 * role:string} | null}
+	 * @returns {User}
 	 */
-	static async getUser() {
-		return AuthService.#USER;
-		// if (await AuthService.isLoggedIn()) {
-		// 	return AuthService.#USER;
-		// }
-		// return null;
+	static getUser() {
+		if (AuthService.#USER) {
+			return new User(AuthService.#USER);
+		}
+		return null;
 	}
 	
 	
 	/* PRIVATE METHODS */
 	
 	static #writeLocalStorageValues(user, token) {
-		localStorage.setItem('x-app-user', JSON.stringify(user));
+		localStorage.setItem('x-app-user', user.toString());
 		localStorage.setItem('x-app-token', token);
 		
 		AuthService.#readLocalStorageValues();
@@ -100,6 +83,8 @@ export default class AuthService {
 	static #readLocalStorageValues() {
 		AuthService.#USER = JSON.parse(localStorage.getItem('x-app-user')) ?? null;
 		AuthService.#TOKEN = localStorage.getItem('x-app-token') ?? null;
+		
+		
 	}
 	
 	static #clearLocalStorage() {
