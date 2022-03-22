@@ -70,13 +70,6 @@
 </template>
 
 <script setup>
-import {onMounted} from 'vue';
-import TopNavBar from '../../components/TopNavBar.vue';
-import appIcon from '../../assets/app-icon.svg';
-
-
-onMounted(async () => {
-});
-
+import appIcon from '@/assets/app-icon.svg';
 </script>
 

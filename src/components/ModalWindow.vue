@@ -20,7 +20,7 @@
           <slot name="footer"/>
         </footer>
 
-        <footer class="gap-2 flex justify-center mt-5">
+        <footer class="mt-5">
           <slot name="belowFooter"/>
         </footer>
 

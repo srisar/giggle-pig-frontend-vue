@@ -1,11 +1,20 @@
 import AxiosService from './axiosService.js';
-import {User} from '../models/user.js';
+import {User} from '@/models/user.js';
+
+const KEY_USER = 'x-gp-user';
+const KEY_JWTOKEN = 'x-gp-jwt';
+
+// const {fetchUser} = useUserAPI();
 
 export default class AuthService {
 	
 	static #USER;
 	static #TOKEN;
 	
+	/**
+	 * Initialize login state from local storage and set
+	 * authentication token for axios instance
+	 */
 	static init() {
 		AuthService.#readLocalStorageValues();
 		
@@ -16,6 +25,12 @@ export default class AuthService {
 		console.log('Auth service initialized...');
 	}
 	
+	/**
+	 * Attempt to log in using given username and password
+	 * @param username
+	 * @param password
+	 * @returns {Promise<boolean>}
+	 */
 	static async login(username, password) {
 		
 		try {
@@ -36,12 +51,19 @@ export default class AuthService {
 		
 	}
 	
+	/**
+	 * Logout the current user, clear the local storage.
+	 */
 	static logout() {
 		AuthService.#clearLocalStorage();
 		AuthService.#readLocalStorageValues();
 	}
 	
 	
+	/**
+	 * Check if there is an active login user in the system
+	 * @returns {Promise<boolean>}
+	 */
 	static async isLoggedIn() {
 		
 		/* trying to see if the data is in localStorage */
@@ -60,7 +82,7 @@ export default class AuthService {
 	
 	
 	/**
-	 *
+	 * Get the logged-in user instance
 	 * @returns {User}
 	 */
 	static getUser() {
@@ -70,26 +92,47 @@ export default class AuthService {
 		return null;
 	}
 	
+	/**
+	 * Update the local store user data from api.
+	 * Use this while updating current user data
+	 */
+	static async updateUser() {
+		
+		try {
+			
+			const response = await AxiosService.instance().post('/users/get.php', {
+				id: id
+			});
+			
+			const user = new User(response.data['payload']['user']);
+			localStorage.setItem(KEY_USER, user.toString());
+			
+			AuthService.#readLocalStorageValues();
+			
+		} catch (e) {
+			console.log(e);
+		}
+	}
 	
-	/* PRIVATE METHODS */
+	/*
+	* PRIVATE METHODS
+	* */
 	
 	static #writeLocalStorageValues(user, token) {
-		localStorage.setItem('x-app-user', user.toString());
-		localStorage.setItem('x-app-token', token);
+		localStorage.setItem(KEY_USER, user.toString());
+		localStorage.setItem(KEY_JWTOKEN, token);
 		
 		AuthService.#readLocalStorageValues();
 	}
 	
 	static #readLocalStorageValues() {
-		AuthService.#USER = JSON.parse(localStorage.getItem('x-app-user')) ?? null;
-		AuthService.#TOKEN = localStorage.getItem('x-app-token') ?? null;
-		
-		
+		AuthService.#USER = JSON.parse(localStorage.getItem(KEY_USER)) ?? null;
+		AuthService.#TOKEN = localStorage.getItem(KEY_JWTOKEN) ?? null;
 	}
 	
 	static #clearLocalStorage() {
-		localStorage.removeItem('x-app-user');
-		localStorage.removeItem('x-app-token');
+		localStorage.removeItem(KEY_USER);
+		localStorage.removeItem(KEY_JWTOKEN);
 	}
 	
 	

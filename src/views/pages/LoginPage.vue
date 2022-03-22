@@ -1,38 +1,35 @@
 <template>
 
   <div class="container mx-auto mt-28 flex justify-center">
+    <section class="mx-2 w-full flex justify-center">
 
-    <div class="card bg-neutral lg:w-1/3">
-      <div class="card-body">
+      <CardContainer class="w-1/2">
 
-        <div class="card-title justify-center">GigglePig SPA</div>
-
-        <div class="grid-cols-2">
-          <div>
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text">Username</span>
-              </label>
-              <input type="text" class="input input-bordered w-full" v-model="state.username">
-            </div>
+        <template v-slot:title>
+          <div class="flex flex-col gap-5">
+            <div>Giggle Pig</div>
+            <img :src="logo" class="w-24 justify-center flex" alt="">
           </div>
-          <div>
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text">Password</span>
-              </label>
-              <input type="password" class="input input-bordered w-full" v-model="state.password">
-            </div>
+        </template>
+
+        <main>
+          <TextInput label="Username" :input-class="{'input-error': errors.formError.hasErrors}" v-model="data.username"/>
+          <TextInput label="Password" type="password" :input-class="{'input-error': errors.formError.hasErrors}" v-model="data.password"/>
+
+          <div class="flex justify-center mt-3">
+            <button class="btn btn-primary w-full" @click="handleLogin">Login</button>
           </div>
-        </div>
+        </main>
 
-        <div class="flex justify-center">
-          <button class="btn btn-primary" @click="handleLogin">Login</button>
-        </div>
+        <template v-slot:footer>
+          <AlertContainer type="error" v-if="errors.formError.hasErrors">
+            {{ errors.formError.message }}
+          </AlertContainer>
+        </template>
 
-      </div>
-    </div>
+      </CardContainer>
 
+    </section>
   </div>
 
 </template>
@@ -41,14 +38,25 @@
 
 import {onMounted, reactive} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import AuthService from '../../services/authService.js';
+import CardContainer from '@/components/CardContainer.vue';
+import AlertContainer from '@/components/form/AlertContainer.vue';
+import TextInput from '@/components/form/TextInput.vue';
+import AuthService from '@/services/authService.js';
+import logo from '@/assets/app-icon.svg';
 
 const router = useRouter();
 const route = useRoute();
 
-const state = reactive({
+const data = reactive({
   username: 'admin',
   password: 'admin',
+});
+
+const errors = reactive({
+  formError: {
+    hasErrors: false,
+    message: ''
+  }
 });
 
 onMounted(async () => {
@@ -58,11 +66,12 @@ onMounted(async () => {
 async function handleLogin() {
   try {
 
-    await AuthService.login(state.username, state.password);
+    await AuthService.login(data.username, data.password);
     redirectIfExists();
 
   } catch (e) {
-    console.log(e);
+    errors.formError.hasErrors = true;
+    errors.formError.message = e.response.data.payload['error'];
   }
 }
 

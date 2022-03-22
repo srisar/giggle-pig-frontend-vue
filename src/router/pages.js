@@ -8,6 +8,7 @@ export const pagesRoutes = [
 		components: {
 			default: () => import('../views/pages/AboutView.vue'),
 			TopNavBar: () => import('../components/TopNavBar.vue'),
+			Drawer: () => import('../components/CommonDrawer.vue'),
 		},
 		meta: {
 			requiresAuth: true,

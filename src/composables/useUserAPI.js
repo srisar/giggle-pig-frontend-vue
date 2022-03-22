@@ -5,15 +5,22 @@ import AuthService from '../services/authService.js';
 
 export function useUserAPI() {
 	
+	const roles = {
+		'USER': 'User',
+		'MANAGER': 'Manager',
+		'ADMIN': 'Administrator',
+	};
+	
 	/**
 	 * Fetch user by the id
 	 * @param id {number}
+	 * @param forced
 	 * @returns {Promise<User>}
 	 */
-	async function fetchUser(id) {
+	async function fetchUser(id, forced = false) {
 		
 		/* if id is as same as the current user, then get the data from auth service */
-		if (id === AuthService.getUser().id) {
+		if (!forced && id === AuthService.getUser().id) {
 			return AuthService.getUser();
 		} else {
 			
@@ -26,9 +33,35 @@ export function useUserAPI() {
 	}
 	
 	/**
+	 * Fetch all the users in the system
+	 */
+	async function fetchUsers() {
+		const response = await AxiosService.instance().post('/users/all.php');
+		const users = response.data['payload'];
+		
+		const usersList = [];
+		users.forEach(u => {
+			usersList.push(new User(u));
+		});
+		return usersList;
+	}
+	
+	/**
+	 * Adds a new user
+	 */
+	async function createUser(user) {
+		await AxiosService.instance().post('/users/create.php', {
+			full_name: user.full_name,
+			username: user.username,
+			password: user.password,
+			email: user.email,
+			role: user.role,
+		});
+	}
+	
+	/**
 	 * Update the user
 	 * @param user {User}
-	 * @returns {Promise<void>}
 	 */
 	async function updateUser(user) {
 		return await AxiosService.instance().post('/users/update.php', {
@@ -40,7 +73,33 @@ export function useUserAPI() {
 		});
 	}
 	
+	/**
+	 * Updates the user password
+	 * @param userId
+	 * @param newPassword
+	 */
+	async function updatePassword(userId, newPassword) {
+		return await AxiosService.instance().post('/users/update-password.php', {
+			id: userId,
+			new_password: newPassword
+		});
+	}
+	
+	
+	// onMounted(async () => {
+	// 	users.value = await fetchUsers();
+	// });
+	
+	
+	/**
+	 * Return values
+	 */
 	return {
-		fetchUser, updateUser
+		fetchUser,
+		fetchUsers,
+		createUser,
+		updateUser,
+		updatePassword,
+		roles,
 	};
 }

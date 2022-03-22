@@ -32,7 +32,7 @@
             </router-link>
           </li>
           <li>
-            <router-link :to="{name:'manageUser', params:{'userName': state.loggedInUser.username}}">
+            <router-link :to="{name:'manageMe'}">
               <UserIcon class="w-4 h-4"/>
               <div>Manage Me</div>
             </router-link>

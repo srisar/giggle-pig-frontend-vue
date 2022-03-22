@@ -6,9 +6,12 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['Alegreya Sans', 'sans-serif']
+				'sans': ['M PLUS 1', 'sans-serif']
 			}
 		},
+		container: {
+			center: true,
+		}
 	},
 	plugins: [
 		require('daisyui')

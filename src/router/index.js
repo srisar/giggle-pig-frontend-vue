@@ -1,5 +1,4 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import HomeView from '../views/pages/HomeView.vue';
 import {pagesRoutes} from './pages.js';
 import AuthService from '../services/authService.js';
 import {usersRoutes} from './users.js';
@@ -13,6 +12,7 @@ const router = createRouter({
 			components: {
 				default: () => import('../views/pages/HomeView.vue'),
 				TopNavBar: () => import('../components/TopNavBar.vue'),
+				Drawer: () => import('../components/CommonDrawer.vue'),
 			},
 			meta: {
 				requiresAuth: true,

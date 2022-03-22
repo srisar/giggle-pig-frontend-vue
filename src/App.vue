@@ -1,23 +1,42 @@
 <template>
 
-  <main class="mb-24">
-    <router-view name="TopNavBar"/>
-    <section>
-      <aside>
-        <router-view name="Sidebar"/>
-      </aside>
-      <main>
-        <router-view/>
+
+  <div class="drawer drawer-mobile h-screen w-full rounded">
+    <input id="my-drawer" type="checkbox" class="drawer-toggle">
+    <div class="drawer-content">
+      <!-- Page content here -->
+
+
+      <main class="flex flex-col h-full">
+        <router-view name="TopNavBar"/>
+
+        <section class="flex-1">
+          <suspense>
+            <div class="container">
+              <router-view/>
+            </div>
+            <template #fallback>
+              loading...
+            </template>
+          </suspense>
+        </section>
+
+        <section class="bg-base-200 py-3 mt-10">
+          <footer class="container mx-auto text-center text-sm">
+            <div class="mx-2">giggle pig - a framework to snort them all!</div>
+          </footer>
+        </section>
+
       </main>
-    </section>
 
-  </main>
+    </div>
 
-  <div class="bg-base-300 py-3 mt-10 fixed inset-x-0 bottom-0">
-    <footer class="container mx-auto text-center text-sm">
-      <div>giggle pig - a framework to snort them all! made in sri lanka with ❤</div>
-    </footer>
+
+    <router-view name="Drawer"/>
+
+
   </div>
+
 
 </template>
 
