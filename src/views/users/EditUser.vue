@@ -34,7 +34,7 @@
           <button class="btn btn-primary" @click="handleUpdate" :disabled="!validEditForm">
             {{ ui.updateButton.label }}
           </button>
-          <button class="btn btn-secondary">Cancel</button>
+          <router-link :to="{name:'manageUsers'}" class="btn btn-secondary">Cancel</router-link>
         </template>
 
         <template v-slot:belowFooter v-if="errors.editForm.hasErrors">
