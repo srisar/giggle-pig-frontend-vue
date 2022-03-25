@@ -1,6 +1,6 @@
 <template>
 
-  <div class="mb-3 w-full form-control">
+  <div class="w-full form-control">
     <label class="label">
       <span class="label-text">{{ label }}</span>
     </label>

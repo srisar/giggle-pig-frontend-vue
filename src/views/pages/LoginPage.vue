@@ -3,7 +3,7 @@
   <div class="container mx-auto mt-28 flex justify-center">
     <section class="mx-2 w-full flex justify-center">
 
-      <CardContainer class="w-1/2">
+      <CardContainer class="md:w-1/2 lg:w-1/3">
 
         <template v-slot:title>
           <div class="flex flex-col gap-5">
