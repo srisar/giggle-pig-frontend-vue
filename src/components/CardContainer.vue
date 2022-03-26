@@ -1,15 +1,13 @@
 <template>
 
   <div class="card w-full bg-base-300 shadow-xl">
-    <section class="card-body">
+    <section class="card-body p-2 md:p-3">
 
       <header class="card-title justify-center">
         <slot name="title"/>
       </header>
 
-      <main>
-        <slot/>
-      </main>
+      <slot/>
 
       <footer class="flex gap-3 justify-end">
         <slot name="footer"/>

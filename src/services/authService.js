@@ -101,7 +101,7 @@ export default class AuthService {
 		try {
 			
 			const response = await AxiosService.instance().post('/users/get.php', {
-				id: id
+				id: AuthService.#USER.id
 			});
 			
 			const user = new User(response.data['payload']['user']);

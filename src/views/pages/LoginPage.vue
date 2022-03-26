@@ -1,7 +1,11 @@
 <template>
 
-  <div class="container mx-auto mt-28 flex justify-center">
-    <section class="mx-2 w-full flex justify-center">
+  <main class="h-full container">
+    <section class="mx-2 w-full flex flex-col gap-5 justify-center items-center h-full">
+
+      <AlertContainer type="warning" class="md:w-1/3" v-if="errors.queryErrors.hasError">
+        {{ errors.queryErrors.message }}
+      </AlertContainer>
 
       <CardContainer class="md:w-1/2 lg:w-1/3">
 
@@ -16,7 +20,7 @@
           <TextInput label="Username" :input-class="{'input-error': errors.formError.hasErrors}" v-model="data.username"/>
           <TextInput label="Password" type="password" :input-class="{'input-error': errors.formError.hasErrors}" v-model="data.password"/>
 
-          <div class="flex justify-center mt-3">
+          <div class="flex justify-center mt-5">
             <button class="btn btn-primary w-full" @click="handleLogin">Login</button>
           </div>
         </main>
@@ -27,10 +31,11 @@
           </AlertContainer>
         </template>
 
+
       </CardContainer>
 
     </section>
-  </div>
+  </main>
 
 </template>
 
@@ -56,10 +61,20 @@ const errors = reactive({
   formError: {
     hasErrors: false,
     message: ''
+  },
+  queryErrors: {
+    hasError: false,
+    message: '',
   }
 });
 
 onMounted(async () => {
+
+  if (route.query['message']) {
+    errors.queryErrors.hasError = true;
+    errors.queryErrors.message = route.query['message'];
+  }
+
 });
 
 

@@ -56,7 +56,7 @@ router.beforeEach(async (to, from) => {
 				path: '/login',
 				query: {
 					redirect: to.fullPath,
-					message: 'access not granted'
+					message: 'Access not granted. Elevated login required.'
 				}
 			};
 		}

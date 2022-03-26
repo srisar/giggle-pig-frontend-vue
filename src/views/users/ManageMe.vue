@@ -1,120 +1,84 @@
 <template>
 
-  <section class="mx-2" v-if="state.user">
+  <section class="mx-2" v-if="data.user">
 
-    <section class="flex justify-center">
-      <!-- card: update details -->
-      <div class="mb-10 w-full shadow-xl card lg:w-1/2 bg-base-300">
-        <div class="card-body">
+    <section class="flex justify-center mb-5">
 
-          <header class="justify-center card-title">{{ state.fullName }} Details</header>
+      <CardContainer class="md:w-1/2">
+        <template v-slot:title>{{ data.fullName }} Details</template>
+        <main>
 
-          <main>
+          <TextInput label="Full name" v-model="data.user.full_name"/>
 
-            <div class="mb-3 w-full form-control">
-              <label class="label">
-                <span class="label-text">Full name</span>
-              </label>
-              <input type="text" class="w-full input input-bordered" v-model="state.user.full_name">
-            </div>
+          <div class="grid md:grid-cols-2 md:gap-3">
+            <TextInput label="Username" v-model="data.user.username"/>
+            <TextInput label="Email" v-model="data.user.email"/>
+          </div>
 
-            <div class="grid md:grid-cols-2 md:gap-3">
-              <div class="mb-3 w-full form-control">
-                <label class="label">
-                  <span class="label-text">Username</span>
-                </label>
-                <input type="text" class="w-full input input-bordered" v-model="state.user.username">
-              </div>
+        </main>
 
-              <div class="mb-3 w-full form-control">
-                <label class="label">
-                  <span class="label-text">Email</span>
-                </label>
-                <input type="text" class="w-full input input-bordered" v-model="state.user.email">
-              </div>
-            </div>
+        <template v-slot:footer>
+          <button class="btn btn-primary" @click="handleUpdate" :disabled="!isFormValidated">
+            {{ ui.updateButton.label }}
+          </button>
+          <button class="btn btn-secondary">Cancel</button>
+        </template><!-- footer -->
 
+      </CardContainer>
 
-          </main>
-
-
-          <footer class="justify-end card-actions">
-            <button class="btn btn-primary" @click="handleUpdate" :disabled="!isFormValidated">
-              {{ state.updateButtonLabel }}
-            </button>
-            <button class="btn btn-secondary">Cancel</button>
-          </footer>
-
-        </div>
-      </div> <!-- end: details -->
     </section>
 
 
     <!-- section: change password -->
-    <section class="flex flex-col justify-center items-center mx-2">
+    <section class="flex justify-center items-center">
 
       <div class="mb-5">
-        <button class="btn btn-error btn-xs" v-if="!state.showChangePasswordArea"
-                @click="state.showChangePasswordArea = !state.showChangePasswordArea">
+        <button class="btn btn-sm" v-if="!ui.areaUpdatePassword.visible"
+                @click="ui.areaUpdatePassword.visible = !ui.areaUpdatePassword.visible">
           Update password
         </button>
       </div>
 
-      <div class="mx-2 w-full shadow-xl lg:w-1/2 bg-base-300 card" v-if="state.showChangePasswordArea">
+      <CardContainer class="md:w-1/2" v-if="ui.areaUpdatePassword.visible">
+        <template v-slot:title>Update Password</template>
+        <main>
 
-        <section class="card-body">
+          <TextInput label="New password" v-model="data.password.newPassword"/>
+          <TextInput label="Confirm password" v-model="data.password.confirmNewPassword"/>
 
-          <header class="justify-center card-title">Update Password</header>
+        </main>
 
-          <main class="grid md:gap-3 lg:grid-cols-2">
+        <template v-slot:footer>
+          <button class="btn btn-primary" :disabled="!isPasswordValidated" @click="ui.modalUpdatePassword.visible = true">
+            Update password
+          </button>
+          <button class="btn btn-secondary" @click="ui.areaUpdatePassword.visible = false">
+            Cancel
+          </button>
+        </template>
 
-            <div class="mb-3 w-full form-control">
-              <label class="label">
-                <span class="label-text">New password</span>
-              </label>
-              <input type="password" class="w-full input input-bordered" v-model="state.password.newPassword">
-            </div>
-
-            <div class="mb-3 w-full form-control">
-              <label class="label">
-                <span class="label-text">Confirm password</span>
-              </label>
-              <input type="password" class="w-full input input-bordered" v-model="state.password.confirmNewPassword">
-            </div>
-
-          </main>
-
-          <footer class="justify-end card-actions">
-            <button class="btn btn-primary" :disabled="!isPasswordValidated" @click="state.modalVisible = true">
-              Update password
-            </button>
-            <button class="btn btn-secondary" @click="state.showChangePasswordArea = false">
-              Cancel
-            </button>
-          </footer>
-
-          <div class="" v-if="state.passwordUpdateResponse.visible">
-            <p class="text-success" v-if="state.passwordUpdateResponse.success">{{ state.passwordUpdateResponse.message }}</p>
-            <p class="text-error" v-else>{{ state.passwordUpdateResponse.message }}</p>
+        <template v-slot:belowFooter>
+          <div class="" v-if="data.passwordUpdateResponse.visible">
+            <p class="text-success" v-if="data.passwordUpdateResponse.success">{{ data.passwordUpdateResponse.message }}</p>
+            <p class="text-error" v-else>{{ data.passwordUpdateResponse.message }}</p>
           </div>
+        </template>
 
-
-        </section>
-      </div><!-- card -->
+      </CardContainer>
 
     </section> <!-- section: change password -->
 
 
   </section><!-- container -->
 
-  <ModalWindow id="mdl-upd" :visible="state.modalVisible" @closed="state.modalVisible = false">
+  <ModalWindow id="mdl-upd" :visible="ui.modalUpdatePassword.visible" @closed="ui.modalUpdatePassword.visible = false">
     <template v-slot:header>Confirm updating password</template>
     <template v-slot:main>
       <p>Updating password is an irreversible operation. Are you sure do you want to continue?</p>
     </template>
     <template v-slot:footer>
       <button class="btn btn-sm btn-primary" @click="handlePasswordUpdate">Yes, Update</button>
-      <button class="btn btn-sm btn-secondary" @click="state.modalVisible = false">Cancel</button>
+      <button class="btn btn-sm btn-secondary" @click="ui.modalUpdatePassword.visible = false">Cancel</button>
     </template>
   </ModalWindow>
 
@@ -123,24 +87,23 @@
 <script setup>
 
 import {computed, onMounted, reactive} from 'vue';
-import AuthService from '../../services/authService.js';
-import {useUserAPI} from '../../composables/useUserAPI.js';
-import {User} from '../../models/user.js';
+import CardContainer from '@/components/CardContainer.vue';
+import TextInput from '@/components/form/TextInput.vue';
+import ModalWindow from '@/components/ModalWindow.vue';
+import {useUserAPI} from '@/composables/useUserAPI.js';
+import AuthService from '@/services/authService.js';
+import {User} from '@/models/user.js';
 import {isEmpty} from 'lodash';
-import ModalWindow from '../../components/ModalWindow.vue';
 
 const {fetchUser, updateUser, updatePassword} = useUserAPI();
 
-const state = reactive({
+const data = reactive({
   /** @type{User} */
   user: undefined,
 
   fullName: '',
   updateButtonLabel: 'Update',
 
-  /* password update data */
-  modalVisible: false,
-  showUpdatePasswordArea: false,
   password: {
     newPassword: '',
     confirmNewPassword: '',
@@ -149,29 +112,54 @@ const state = reactive({
     visible: false,
     success: false,
     message: 'Password updated'
-  }
+  },
 
 });
 
+const ui = reactive({
+
+  updateButton: {
+    label: 'Update'
+  },
+
+  modalUpdatePassword: {
+    visible: false,
+  },
+  areaUpdatePassword: {
+    visible: false,
+  },
+
+});
+
+const errors = reactive({});
+
+/* --- */
+/* Computed Properties */
+/* --- */
+
 const isFormValidated = computed(() => {
-  return !isEmpty(state.user.full_name) && !isEmpty(state.user.username);
+  return !isEmpty(data.user.full_name) && !isEmpty(data.user.username);
 });
 
 const isPasswordValidated = computed(() => {
-  if (isEmpty(state.password.newPassword)) {
+  if (isEmpty(data.password.newPassword)) {
     return false;
   }
-  return state.password.newPassword === state.password.confirmNewPassword;
+  return data.password.newPassword === data.password.confirmNewPassword;
 });
 
+
+/* --- */
+/* Hooks */
+/* --- */
 
 onMounted(async () => {
   try {
 
     const _user = await AuthService.getUser();
 
-    state.user = await fetchUser(_user.id);
-    state.fullName = state.user.full_name;
+    data.user = await fetchUser(_user.id);
+    data.fullName = data.user.full_name;
 
   } catch (e) {
     console.log(e);
@@ -179,21 +167,22 @@ onMounted(async () => {
 });
 
 
-/**
- * EH: Update general details button
- */
+/* --- */
+/* Event Handlers */
+/* --- */
+
+
 async function handleUpdate() {
   try {
 
-    state.updateButtonLabel = 'Updating...';
-    await updateUser(state.user);
+    ui.updateButton.label = 'Updating...';
+    await updateUser(data.user);
 
     await AuthService.updateUser();
 
-    state.updateButtonLabel = 'Updated!';
-
+    ui.updateButton.label = 'Updated!';
     setTimeout(() => {
-      state.updateButtonLabel = 'Update';
+      ui.updateButton.label = 'Update';
     }, 3000);
 
   } catch (e) {
@@ -204,19 +193,13 @@ async function handleUpdate() {
 async function handlePasswordUpdate() {
   try {
 
-    await updatePassword(state.user.id, state.password.newPassword);
-    state.modalVisible = false;
-    state.passwordUpdateResponse.visible = true;
-    state.passwordUpdateResponse.success = true;
-    state.passwordUpdateResponse.message = 'Password updated successfully';
+    await updatePassword(data.user.id, data.password.newPassword);
+    ui.modalUpdatePassword.visible = false;
 
 
   } catch (e) {
     console.log('e');
-    state.modalVisible = false;
-    state.passwordUpdateResponse.visible = true;
-    state.passwordUpdateResponse.success = false;
-    state.passwordUpdateResponse.message = 'Password update failed';
+    ui.modalUpdatePassword.visible = false;
   }
 }
 

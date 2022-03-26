@@ -2,37 +2,39 @@
 
   <main class="mx-2" v-if="data.hasUser">
 
-    <!-- edit user -->
-    <section class="flex flex-col gap-5 items-center justify-center">
+    <section id="edit_user" class="flex flex-col gap-5 justify-center items-center mb-5">
 
       <CardContainer class="lg:w-1/2">
         <template v-slot:title>{{ data.userToEdit.full_name }} Details</template>
 
-        <TextInput
-            label="Full name"
-            :input-class="{'input-error': !validFullName}"
-            v-model.trim="data.userToEdit.full_name"
-        />
+        <main class="mb-3">
 
-        <div class="grid md:grid-cols-2 md:gap-3">
           <TextInput
-              label="Username"
-              :input-class="{'input-error': !validUsername}"
-              v-model.trim="data.userToEdit.username"
+              label="Full name"
+              :input-class="{'input-error': !validFullName}"
+              v-model.trim="data.userToEdit.full_name"
           />
-          <TextInput
-              label="Email"
-              :input-class="{'input-error': !validEmail}"
-              v-model.trim="data.userToEdit.email"
-          />
-        </div>
 
-        <DropdownInput label="Role" :options="roles" v-model="data.userToEdit.role"/>
+          <div class="grid md:grid-cols-2 md:gap-3">
+            <TextInput
+                label="Username"
+                :input-class="{'input-error': !validUsername}"
+                v-model.trim="data.userToEdit.username"
+            />
+            <TextInput
+                label="Email"
+                :input-class="{'input-error': !validEmail}"
+                v-model.trim="data.userToEdit.email"
+            />
+          </div>
 
+          <DropdownInput label="Role" :options="roles" v-model="data.userToEdit.role"/>
+
+        </main>
 
         <template v-slot:footer>
           <button class="btn btn-primary" @click="handleUpdate" :disabled="!validEditForm">
-            {{ ui.updateButton.label }}
+            {{ ui.buttonUpdateDetails.label }}
           </button>
           <router-link :to="{name:'manageUsers'}" class="btn btn-secondary">Cancel</router-link>
         </template>
@@ -45,14 +47,60 @@
 
       </CardContainer>
 
-    </section>
+    </section><!-- edit_user -->
+
+    <section id="update_password" class="flex flex-col justify-center items-center mb-5">
+
+      <div class="mb-3" v-if="!ui.areaUpdatePassword.visible">
+        <button class="btn btn-sm" @click="ui.areaUpdatePassword.visible = true">
+          Update password
+        </button>
+      </div>
+
+      <CardContainer class="md:w-1/2" v-if="ui.areaUpdatePassword.visible">
+        <template v-slot:title>Update Password</template>
+
+        <main class="mb-3">
+          <TextInput label="New password" v-model="data.changePassword.newPassword"/>
+          <TextInput label="Confirm password" v-model="data.changePassword.confirmNewPassword"/>
+        </main>
+
+        <template v-slot:footer>
+          <button class="btn btn-primary btn-sm" :disabled="!validChangePasswordForm" @click="ui.modalConfirmUpdatePassword.visible=true">
+            {{ ui.buttonUpdatePassword.label }}
+          </button>
+          <button class="btn btn-sm btn-secondary" @click="ui.areaUpdatePassword.visible = false">Cancel</button>
+        </template><!-- footer -->
+
+
+        <template v-slot:belowFooter v-if="errors.passwordForm.hasErrors">
+          <AlertContainer type="error" class="mt-3">
+            {{ errors.passwordForm.message }}
+          </AlertContainer>
+        </template>
+
+      </CardContainer>
+
+    </section><!-- update_password -->
 
   </main>
+
+  <ModalWindow id="mdl-upd" :visible="ui.modalConfirmUpdatePassword.visible" @closed="ui.modalConfirmUpdatePassword.visible = false">
+    <template v-slot:header>Confirm updating password</template>
+    <template v-slot:main>
+      <p>Updating password is an irreversible operation. Are you sure do you want to continue?</p>
+    </template>
+    <template v-slot:footer>
+      <button class="btn btn-sm btn-primary" @click="handleUpdatePassword">Yes, Update</button>
+      <button class="btn btn-sm btn-secondary" @click="ui.modalConfirmUpdatePassword.visible = false">Cancel</button>
+    </template>
+  </ModalWindow>
 
 </template>
 
 <script setup>
-import {computed, onMounted, reactive} from 'vue';
+import ModalWindow from '@/components/ModalWindow.vue';
+import {computed, onMounted, reactive, watchEffect} from 'vue';
 import {useRoute} from 'vue-router';
 import TextInput from '@/components/form/TextInput.vue';
 import DropdownInput from '@/components/form/DropdownInput.vue';
@@ -63,7 +111,7 @@ import {User} from '@/models/user.js';
 import {isEmpty} from 'lodash';
 
 const route = useRoute();
-const {fetchUser, updateUser, roles} = useUserAPI();
+const {fetchUser, updateUser, roles, updatePassword} = useUserAPI();
 
 
 const data = reactive({
@@ -71,12 +119,34 @@ const data = reactive({
   /** @type{User} */
   userToEdit: new User({}),
   fullName: '',
+
+  changePassword: {
+    newPassword: '',
+    confirmNewPassword: '',
+  }
+
 });
 
 const ui = reactive({
-  updateButton: {
-    label: 'Update'
+  buttonUpdateDetails: {
+    label: 'Update',
+    disabled: false,
+  },
+
+  buttonUpdatePassword: {
+    label: 'Update',
+    disabled: false,
+  },
+
+  areaUpdatePassword: {
+    visible: false,
+  },
+
+  modalConfirmUpdatePassword: {
+    visible: false,
   }
+
+
 });
 
 const errors = reactive({
@@ -91,6 +161,9 @@ const errors = reactive({
   }
 });
 
+/* --- */
+/* Computed Properties */
+/* --- */
 
 const validFullName = computed(() => {
   return !isEmpty(data.userToEdit.full_name);
@@ -107,6 +180,30 @@ const validEditForm = computed(() => {
   return validEmail.value && validUsername.value && validFullName.value;
 });
 
+const validChangePasswordForm = computed(() => {
+  if (isEmpty(data.changePassword.newPassword)) return false;
+  return data.changePassword.newPassword === data.changePassword.confirmNewPassword;
+
+});
+
+/* --- */
+/* Watchers */
+/* --- */
+
+watchEffect(() => {
+  if (!validChangePasswordForm.value) {
+    errors.passwordForm.hasErrors = true;
+    errors.passwordForm.message = 'Invalid password or password mismatch';
+  } else {
+    errors.passwordForm.hasErrors = false;
+    errors.passwordForm.message = '';
+  }
+});
+
+
+/* --- */
+/* Hooks */
+/* --- */
 
 onMounted(async () => {
   try {
@@ -118,24 +215,43 @@ onMounted(async () => {
   }
 });
 
+/* --- */
+/* Event Handlers */
+/* --- */
 
 async function handleUpdate() {
   try {
-    ui.updateButton.label = 'Updating...';
+    ui.buttonUpdateDetails.label = 'Updating...';
     await updateUser(data.userToEdit);
 
-    ui.updateButton.label = '✔️Updated';
+    ui.buttonUpdateDetails.label = '✔️Updated';
 
     setTimeout(() => {
-      ui.updateButton.label = 'Update';
+      ui.buttonUpdateDetails.label = 'Update';
     }, 3000);
 
   } catch (e) {
-    ui.updateButton.label = 'Update';
+    ui.buttonUpdateDetails.label = 'Update';
     errors.editForm.hasErrors = true;
     errors.editForm.message = e.response.data['payload']['error'];
   }
 }
+
+async function handleUpdatePassword() {
+  try {
+
+    await updatePassword(data.userToEdit.id, data.changePassword.newPassword);
+    ui.modalConfirmUpdatePassword.visible = false;
+
+    ui.areaUpdatePassword.visible = false;
+
+
+  } catch (e) {
+    console.log('e');
+    ui.modalConfirmUpdatePassword.visible = false;
+  }
+}
+
 
 </script>
 
