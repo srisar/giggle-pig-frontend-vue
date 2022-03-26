@@ -6,7 +6,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['M PLUS 1', 'sans-serif']
+				'sans': ['Barlow', 'sans-serif']
 			}
 		},
 		container: {
