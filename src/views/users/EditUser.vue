@@ -99,9 +99,9 @@
 </template>
 
 <script setup>
-import ModalWindow from '@/components/ModalWindow.vue';
 import {computed, onMounted, reactive, watchEffect} from 'vue';
 import {useRoute} from 'vue-router';
+import ModalWindow from '@/components/ModalWindow.vue';
 import TextInput from '@/components/form/TextInput.vue';
 import DropdownInput from '@/components/form/DropdownInput.vue';
 import CardContainer from '@/components/CardContainer.vue';
@@ -116,7 +116,6 @@ const {fetchUser, updateUser, roles, updatePassword} = useUserAPI();
 
 const data = reactive({
   hasUser: false,
-  /** @type{User} */
   userToEdit: new User({}),
   fullName: '',
 

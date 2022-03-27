@@ -13,6 +13,7 @@ import AuthService from './services/authService.js';
 
 AxiosService.init({
 	baseURL: 'http://localhost/api',
+	// baseURL: 'http://192.168.1.19/api', /* local network debug */
 });
 
 AuthService.init();

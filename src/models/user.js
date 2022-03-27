@@ -7,15 +7,10 @@ export class User extends Model {
 	static ROLE_MANAGER = 'MANAGER';
 	static ROLE_USER = 'USER';
 	
-	id;
-	username;
-	role;
-	email;
-	full_name;
-	profile_pic;
-	password;
-	confirm_password;
-	
+	/**
+	 * Creates new instance of User
+	 * @param attributes
+	 */
 	constructor(attributes) {
 		super();
 		
@@ -33,5 +28,6 @@ export class User extends Model {
 	isAdmin() {
 		return this.role === User.ROLE_ADMIN;
 	}
+	
 	
 }

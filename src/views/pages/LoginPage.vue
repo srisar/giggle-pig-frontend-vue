@@ -1,7 +1,7 @@
 <template>
 
   <main class="h-full container">
-    <section class="mx-2 w-full flex flex-col gap-5 justify-center items-center h-full">
+    <section class="mx-2 flex flex-col gap-5 justify-center items-center h-full">
 
       <AlertContainer type="warning" class="md:w-1/3" v-if="errors.queryErrors.hasError">
         {{ errors.queryErrors.message }}
@@ -16,14 +16,23 @@
           </div>
         </template>
 
-        <main>
-          <TextInput label="Username" :input-class="{'input-error': errors.formError.hasErrors}" v-model="data.username"/>
-          <TextInput label="Password" type="password" :input-class="{'input-error': errors.formError.hasErrors}" v-model="data.password"/>
+        <form @submit.prevent="handleLogin">
+          <TextInput
+              label="Username"
+              :input-class="{'input-error': errors.formError.hasErrors}"
+              v-model="data.username"
+          />
+          <TextInput
+              label="Password"
+              type="password"
+              :input-class="{'input-error': errors.formError.hasErrors}"
+              v-model="data.password"
+          />
 
           <div class="flex justify-center mt-5">
             <button class="btn btn-primary w-full" @click="handleLogin">Login</button>
           </div>
-        </main>
+        </form>
 
         <template v-slot:footer>
           <AlertContainer type="error" v-if="errors.formError.hasErrors">
@@ -31,8 +40,8 @@
           </AlertContainer>
         </template>
 
-
       </CardContainer>
+
 
     </section>
   </main>
@@ -65,7 +74,10 @@ const errors = reactive({
   queryErrors: {
     hasError: false,
     message: '',
-  }
+  },
+
+  debugError: '',
+
 });
 
 onMounted(async () => {
@@ -85,6 +97,7 @@ async function handleLogin() {
     redirectIfExists();
 
   } catch (e) {
+    errors.debugError = e;
     errors.formError.hasErrors = true;
     errors.formError.message = e.response.data.payload['error'];
   }

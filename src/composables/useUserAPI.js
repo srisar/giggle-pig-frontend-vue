@@ -32,8 +32,10 @@ export function useUserAPI() {
 		}
 	}
 	
+	
 	/**
 	 * Fetch all the users in the system
+	 * @return {Promise<User[]>}
 	 */
 	async function fetchUsers() {
 		const response = await AxiosService.instance().post('/users/all.php');

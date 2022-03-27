@@ -13,7 +13,7 @@
         </header>
 
         <main class="py-2">
-          <slot name="main">modal body</slot>
+          <slot>modal body</slot>
         </main>
 
         <footer class="gap-2 flex justify-end mt-5">
