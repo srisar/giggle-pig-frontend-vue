@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /* override the default font size of tailwindcss */
-html {
-    font-size: 14px;
+html, body {
+    font-size: 13px;
 }
 
 .router-link-active {

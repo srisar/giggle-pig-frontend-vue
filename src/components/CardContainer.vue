@@ -3,7 +3,7 @@
   <div class="card w-full bg-base-300 shadow-xl">
     <section class="card-body p-2 md:p-3">
 
-      <header class="card-title justify-center">
+      <header class="card-title justify-center mb-5">
         <slot name="title"/>
       </header>
 

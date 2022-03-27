@@ -18,7 +18,7 @@
         </section>
 
         <section class="grid lg:grid-cols-2 lg:gap-3 mb-3">
-          <DropdownInput label="Role" :options="roles" v-model="data.newUser.role"/>
+          <DropdownInput label="Role" :options="data.roles" v-model="data.newUser.role"/>
         </section>
 
         <!-- password -->
@@ -71,20 +71,22 @@
           </button>
         </section>
 
-        <main>
+        <main id="active_users" class="mb-5">
+
+          <h3 class="text-xl mb-3 text-center">Active users</h3>
 
           <div class="overflow-x-auto">
             <table class="table table-zebra w-full">
               <thead>
               <tr>
-                <th>Full name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
+                <th class="w-1/4">Full name</th>
+                <th class="w-1/4">Username</th>
+                <th class="w-1/4">Email</th>
+                <th class="w-1/4">Role</th>
               </tr>
               </thead>
               <tbody>
-              <tr v-for="user in data.users">
+              <tr v-for="user in data.activeUsers">
                 <td v-if="data.currentUser && user.id === data.currentUser.id">
                   <router-link class="link link-primary" :to="{name:'manageMe'}">
                     {{ user.full_name }}
@@ -103,7 +105,45 @@
             </table>
           </div>
 
-        </main>
+        </main><!-- active_users -->
+
+
+        <main id="inactive_users" v-if="data.inactiveUsers.length > 0">
+
+          <h3 class="text-xl mb-3 text-center">Inactive users</h3>
+
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead>
+              <tr>
+                <th class="w-1/4">Full name</th>
+                <th class="w-1/4">Username</th>
+                <th class="w-1/4">Email</th>
+                <th class="w-1/4">Role</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="user in data.inactiveUsers">
+                <td v-if="data.currentUser && user.id === data.currentUser.id">
+                  <router-link class="link link-primary" :to="{name:'manageMe'}">
+                    {{ user.full_name }}
+                  </router-link>
+                </td>
+                <td v-else>
+                  <router-link class="link link-primary" :to="{name:'editUser', params:{userId: user.id}}">
+                    {{ user.full_name }}
+                  </router-link>
+                </td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </main><!-- active_users -->
+
 
       </CardContainer>
 
@@ -116,27 +156,33 @@
 
 <script setup>
 
+import {computed, onBeforeMount, onMounted, reactive} from 'vue';
 import DropdownInput from '@/components/form/DropdownInput.vue';
 import TextInput from '@/components/form/TextInput.vue';
-import AuthService from '@/services/authService.js';
-import {computed, onBeforeMount, onMounted, reactive} from 'vue';
 import CardContainer from '@/components/CardContainer.vue';
 import AlertContainer from '@/components/form/AlertContainer.vue';
 import ModalWindow from '@/components/ModalWindow.vue';
 import {UserAddIcon} from '@heroicons/vue/solid';
-import {useUserAPI} from '@/composables/useUserAPI.js';
+import AuthService from '@/services/authService.js';
+import UserApi from '@/api/UserApi.js';
 import {User} from '@/models/user.js';
 import {isEmpty} from 'lodash';
 
-const {roles, createUser, fetchUsers} = useUserAPI();
 
 const data = reactive({
   /** @type {User[]} */
-  users: [],
+  activeUsers: [],
+
+  /** @type {User[]} */
+  inactiveUsers: [],
+
   /** @type {User|null} */
   currentUser: null,
+
   /** @type {User|null} */
   newUser: null,
+
+  roles: UserApi.roles,
 });
 
 const errors = reactive({
@@ -155,7 +201,6 @@ const ui = reactive({
 /* --- */
 
 const validPassword = computed(() => {
-
   if (isEmpty(data.newUser.password)) {
     return false;
   } else {
@@ -183,7 +228,8 @@ onMounted(async () => {
 
   /* fetch all the users from api */
   try {
-    data.users = await fetchUsers();
+    data.activeUsers = await UserApi.fetchUsers(User.STATUS_ACTIVE);
+    data.inactiveUsers = await UserApi.fetchUsers(User.STATUS_INACTIVE);
   } catch (e) {
     console.log(e);
   }
@@ -223,10 +269,10 @@ function handleCancelAddUser() {
 async function handleAddUser() {
   try {
 
-    await createUser(data.newUser);
+    await UserApi.createUser(data.newUser);
 
     try {
-      data.users = await fetchUsers();
+      data.users = await UserApi.fetchUsers();
     } catch (e) {
       console.log(e);
     }

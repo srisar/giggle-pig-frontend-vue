@@ -21,13 +21,12 @@
           <button class="btn btn-primary" @click="handleUpdate" :disabled="!isFormValidated">
             {{ ui.updateButton.label }}
           </button>
-          <button class="btn btn-secondary">Cancel</button>
+          <router-link :to="{name:'manageUsers'}" class="btn btn-secondary">Cancel</router-link>
         </template><!-- footer -->
 
       </CardContainer>
 
     </section>
-
 
     <!-- section: change password -->
     <section class="flex justify-center items-center">
@@ -68,14 +67,17 @@
 
     </section> <!-- section: change password -->
 
+  </section>
 
-  </section><!-- container -->
 
+  <!-- modal: password update confirmation -->
   <ModalWindow id="mdl-upd" :visible="ui.modalUpdatePassword.visible" @closed="ui.modalUpdatePassword.visible = false">
     <template v-slot:header>Confirm updating password</template>
-    <template v-slot:main>
+
+    <main>
       <p>Updating password is an irreversible operation. Are you sure do you want to continue?</p>
-    </template>
+    </main>
+
     <template v-slot:footer>
       <button class="btn btn-sm btn-primary" @click="handlePasswordUpdate">Yes, Update</button>
       <button class="btn btn-sm btn-secondary" @click="ui.modalUpdatePassword.visible = false">Cancel</button>
@@ -90,12 +92,11 @@ import {computed, onMounted, reactive} from 'vue';
 import CardContainer from '@/components/CardContainer.vue';
 import TextInput from '@/components/form/TextInput.vue';
 import ModalWindow from '@/components/ModalWindow.vue';
-import {useUserAPI} from '@/composables/useUserAPI.js';
 import AuthService from '@/services/authService.js';
+import UserApi from '@/api/UserApi.js';
 import {User} from '@/models/user.js';
 import {isEmpty} from 'lodash';
 
-const {fetchUser, updateUser, updatePassword} = useUserAPI();
 
 const data = reactive({
   /** @type{User} */
@@ -113,6 +114,8 @@ const data = reactive({
     success: false,
     message: 'Password updated'
   },
+
+  roles: UserApi.roles,
 
 });
 
@@ -158,7 +161,7 @@ onMounted(async () => {
 
     const _user = await AuthService.getUser();
 
-    data.user = await fetchUser(_user.id);
+    data.user = await UserApi.fetchUser(_user.id);
     data.fullName = data.user.full_name;
 
   } catch (e) {
@@ -176,7 +179,7 @@ async function handleUpdate() {
   try {
 
     ui.updateButton.label = 'Updating...';
-    await updateUser(data.user);
+    await UserApi.updateUser(data.user);
 
     await AuthService.updateUser();
 
@@ -193,7 +196,7 @@ async function handleUpdate() {
 async function handlePasswordUpdate() {
   try {
 
-    await updatePassword(data.user.id, data.password.newPassword);
+    await UserApi.updatePassword(data.user.id, data.password.newPassword);
     ui.modalUpdatePassword.visible = false;
 
 

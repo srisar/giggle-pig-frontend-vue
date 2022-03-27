@@ -19,7 +19,7 @@
     <!-- right side -->
     <div class="navbar-end">
       <div class="dropdown dropdown-end">
-        <label tabindex="0" class="btn m-1 gap-2">
+        <label tabindex="0" class="btn btn-ghost m-1 gap-2">
           <span class="hidden lg:inline">{{ state.loggedInUser.full_name }}</span>
           <span><UserCircleIcon class="w-8 h-8"/></span>
         </label>

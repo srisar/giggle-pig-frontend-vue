@@ -7,6 +7,9 @@ export class User extends Model {
 	static ROLE_MANAGER = 'MANAGER';
 	static ROLE_USER = 'USER';
 	
+	static STATUS_ACTIVE = 'ACTIVE';
+	static STATUS_INACTIVE = 'INACTIVE';
+	
 	/**
 	 * Creates new instance of User
 	 * @param attributes
@@ -20,6 +23,7 @@ export class User extends Model {
 		this.email = get(attributes, 'email', '');
 		this.full_name = get(attributes, 'full_name', '');
 		this.profile_pic = get(attributes, 'profile_pic', '');
+		this.status = get(attributes, 'status', User.STATUS_ACTIVE);
 		
 		this.password = '';
 		this.confirm_password = '';
