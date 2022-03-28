@@ -62,7 +62,7 @@
     <!-- list users -->
     <section class="flex justify-center mx-2">
 
-      <CardContainer>
+      <CardContainer :has-header="false">
 
         <section class="mb-3">
           <button class="btn btn-sm btn-accent" @click="ui.isAddUserModalVisible = true">

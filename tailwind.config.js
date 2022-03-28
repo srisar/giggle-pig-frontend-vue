@@ -6,7 +6,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['Cantarell', 'sans-serif']
+				'sans': ['Poppins', 'sans-serif']
 			}
 		},
 		container: {
