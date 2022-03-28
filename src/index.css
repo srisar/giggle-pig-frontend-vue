@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 /* override the default font size of tailwindcss */
-html, body {
-    font-size: 13px;
-}
+/*html, body {*/
+/*    font-size: 13px;*/
+/*}*/
 
 .router-link-active {
     @apply text-primary;

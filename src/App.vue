@@ -1,7 +1,7 @@
 <template>
 
 
-  <div class="drawer drawer-mobile h-screen w-full rounded">
+  <div class="drawer drawer-mobile h-screen w-full">
     <input id="my-drawer" type="checkbox" class="drawer-toggle">
     <div class="drawer-content">
       <!-- Page content here -->

@@ -7,7 +7,7 @@
         {{ errors.queryErrors.message }}
       </AlertContainer>
 
-      <CardContainer class="md:w-1/2 lg:w-1/3">
+      <CardContainer class="md:w-96">
 
         <template v-slot:title>
           <div class="flex flex-col gap-5">

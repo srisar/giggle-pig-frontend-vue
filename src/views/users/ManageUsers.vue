@@ -272,7 +272,7 @@ async function handleAddUser() {
     await UserApi.createUser(data.newUser);
 
     try {
-      data.users = await UserApi.fetchUsers();
+      data.activeUsers = await UserApi.fetchUsers();
     } catch (e) {
       console.log(e);
     }

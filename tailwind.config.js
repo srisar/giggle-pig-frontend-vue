@@ -6,7 +6,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['Fredoka', 'sans-serif']
+				'sans': ['Cantarell', 'sans-serif']
 			}
 		},
 		container: {
