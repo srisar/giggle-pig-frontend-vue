@@ -6,12 +6,16 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				'sans': ['Farro', 'sans-serif']
+				'sans': ['Fredoka', 'sans-serif']
 			}
 		},
 		container: {
 			center: true,
-		}
+		},
+		/*fontWeight: {
+			normal: 400,
+			bold: 400,
+		}*/
 	},
 	plugins: [
 		require('daisyui')
